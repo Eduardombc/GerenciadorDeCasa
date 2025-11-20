@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using GerenciadorDeCasa.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace GerenciadorDeCasa.Models;
 

@@ -1,4 +1,4 @@
-﻿namespace GerenciadorDeCasa.Models;
+﻿namespace GerenciadorDeCasa.Models.Enums;
 
 public enum FrequencyType
 {

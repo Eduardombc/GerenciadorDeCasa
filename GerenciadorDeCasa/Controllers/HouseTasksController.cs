@@ -1,3 +1,4 @@
+using GerenciadorDeCasa.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GerenciadorDeCasa.Controllers
@@ -6,10 +7,16 @@ namespace GerenciadorDeCasa.Controllers
     [Route("[controller]")]
     public class HouseTasksController : ControllerBase
     {
+        private readonly AppDbContext _context;
+
+        public HouseTasksController(AppDbContext context)
+        {
+            _context = context;
+        }
+
         [HttpGet]
         public IActionResult GetTasks()
         {
-            // Lógica para obter as tarefas
             return Ok(new { Message = "Lista de tarefas" });
         }
 
