@@ -1,5 +1,6 @@
 using GerenciadorDeCasa.Data;
 using GerenciadorDeCasa.Services;
+using GerenciadorDeCasa.Services.Notifications;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<AppDbContext>();
 builder.Services.AddScoped<TaskService>();
 builder.Services.AddHostedService<TaskReminder>();
+builder.Services.AddTransient<INotificationService, EmailNotificationService>();
 
 var app = builder.Build();
 

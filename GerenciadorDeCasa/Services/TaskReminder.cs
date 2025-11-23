@@ -1,4 +1,6 @@
 ﻿
+using GerenciadorDeCasa.Services.Notifications;
+
 namespace GerenciadorDeCasa.Services;
 
 public class TaskReminder : BackgroundService
@@ -27,21 +29,18 @@ public class TaskReminder : BackgroundService
                 {
                     var taskService = scope.ServiceProvider.GetRequiredService<TaskService>();
                     var listaDeTask = await taskService.GetTasksByTime(stoppingToken);
-
-                    // LOG NOVO: Ajuda a saber se o banco foi consultado com sucesso
-                    if (listaDeTask.Any())
-                    {
-                        _logger.LogInformation($"✅ Encontradas {listaDeTask.Count()} tarefas para agora.");
-                    }
-                    else
-                    {
-                        // Log opcional para não poluir muito, mas útil agora
-                        _logger.LogInformation("ℹ️ Nenhuma tarefa para este minuto.");
-                    }
+                    var notifier = scope.ServiceProvider.GetRequiredService<INotificationService>();
 
                     foreach (var task in listaDeTask)
                     {
-                        _logger.LogWarning($"🔥 ALERTA! ENVIAR NOTIFICAÇÃO: '{task.Title}' para {task.ResponsiblePersonContact}");
+                        _logger.LogWarning($"🔥 Processando tarefa: {task.Title}");
+
+                        // 2. Enviamos de verdade!
+                        await notifier.SendNotificationAsync(
+                            task.ResponsiblePersonContact, // O email que está no banco
+                            task.Title,
+                            task.Description
+                        );
                     }
                 }
             }
