@@ -2,7 +2,7 @@
 
 public enum FrequencyType
 {
-    OneTime,
-    Daily,
-    Weekly,
+    OneTime = 0,
+    Daily = 1,
+    Weekly = 2,
 }

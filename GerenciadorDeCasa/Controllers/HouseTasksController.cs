@@ -1,4 +1,6 @@
 using GerenciadorDeCasa.Data;
+using GerenciadorDeCasa.Models;
+using GerenciadorDeCasa.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GerenciadorDeCasa.Controllers
@@ -7,24 +9,49 @@ namespace GerenciadorDeCasa.Controllers
     [Route("[controller]")]
     public class HouseTasksController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly TaskService _taskService;
 
-        public HouseTasksController(AppDbContext context)
+        public HouseTasksController(TaskService taskService)
         {
-            _context = context;
+            _taskService = taskService;
         }
 
         [HttpGet]
-        public IActionResult GetTasks()
+        public ActionResult GetTasks()
         {
-            return Ok(new { Message = "Lista de tarefas" });
+            return Ok(_taskService.GetTasks());
+        }
+
+        [HttpGet("today")]
+        public ActionResult GetTodayTasks()
+        {
+            if (_taskService.GetTaskToday() is null)
+            {
+                return NotFound("Nenhuma tarefa encontrada para hoje.");
+            }
+            return Ok(_taskService.GetTaskToday());
         }
 
         [HttpPost]
-        public IActionResult CreateTask()
+        public async Task<ActionResult<HouseTask>> CreateTasks(HouseTask task)
         {
-            // Lógica para criar uma nova tarefa
-            return Ok(new { Message = "Tarefa criada" });
+            return task == null ? BadRequest("Tarefa inválida.") : Ok(await _taskService.CreateTask(task));
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateTasks(int id, HouseTask updatedTask)
+        {
+            var result = await _taskService.UpdateTask(id, updatedTask);
+            return result is null ? NotFound("Tarefa não encontrada.") : Ok(result);
+        }
+
+
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteTask(int id)
+        {
+            var result = await _taskService.DeleteTask(id);
+            return result ? Ok("Tarefa deletada com sucesso.") : NotFound("Tarefa não encontrada.");
         }
     }
 }
